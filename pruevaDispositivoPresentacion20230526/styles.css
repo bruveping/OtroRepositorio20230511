@@ -1,5 +1,11 @@
-body{
+*{
+  padding: 0;
+  margin: 0;  
   text-decoration: none;
+}
+
+body{
+
 }
 .slideshow-container {
     position: relative;
@@ -18,20 +24,31 @@ body{
    }
 
   h1{
-    margin-left:  7%;
-    margin-right: 7%;
+    width: 80%;
     background-color: #3bcad4;
+    text-align: center;
+margin: auto;
+box-sizing: border-box;
   }
 
   p{
-    margin-left:  7%;
-    margin-right: 7%;
+    width: 80%;
+    margin: auto;
+    box-sizing: border-box;
   }
 
 .saleDelEmergente{
+  width: 1.5em;
+  height: 1.5em;
 color: #fff;
+background-color: #2c1972;
 font-size: 30px;
-
+font-family: Arial, Helvetica, sans-serif;
+padding: 0.3em 0.3em 0.3em 0.3em;
+border-radius: 2em;
+text-align: center;
+margin: auto;
+box-sizing: border-box;
   }
 
   .elElementoInteractivo:target{
@@ -40,11 +57,19 @@ font-size: 30px;
     top: 10%;
     background-color: #aa6eaa;
     display: flex;
+    width: 80%;
     z-index: 1;
     box-sizing: border-box;
     padding: 3em;
+    animation: fade 0.6s linear;
+    border-radius: 2em;
 }/*con esto cuando se apunta al id con un href se puede ver, se puede agregar un href al doc html (p.e. index.html) y desaparece*/
   
+.linkResaltado{
+font-weight: bold;
+color: #c52b2b;
+}
+
   .prev,
   .next {
     position: absolute;
