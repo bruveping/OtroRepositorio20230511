@@ -31,6 +31,7 @@ function checkKey(e) {
   }
 }
 
+
 document.addEventListener("keydown", checkKey);
 
 /*

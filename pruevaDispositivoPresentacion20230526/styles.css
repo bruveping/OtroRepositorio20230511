@@ -37,6 +37,7 @@ box-sizing: border-box;
     box-sizing: border-box;
   }
 
+/*
 .saleDelEmergente{
   width: 1.5em;
   height: 1.5em;
@@ -49,7 +50,7 @@ border-radius: 2em;
 text-align: center;
 margin: auto;
 box-sizing: border-box;
-  }
+  }*/
 
   .elElementoInteractivo:target{
     margin: auto;
