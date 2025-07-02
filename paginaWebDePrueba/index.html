@@ -1,18 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="elEstilo.css">
+  <meta charset="UTF-8" />
+  <title>veado-doblador™</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    #drop { border: 2px dashed #aaa; padding: 40px; margin: 20px; }
+  </style>
 </head>
 <body>
-    <h1>Este es el título</h1>
-    <p>
-        Esto es una prueba del párrafo
-        puedo probar algo más
-    </p>
-    <p> Pero vuelvo a poner algo</p>
+  <h2>🎙️ veado-doblador™</h2>
+  <p>Arrastrá un MP3 o hacé clic para cargar uno.</p>
+  <div id="drop">🎧 Soltá tu MP3 acá</div>
+  <audio id="player" controls></audio>
+
+  <script>
+    const drop = document.getElementById("drop");
+    const audio = document.getElementById("player");
+    let socket;
+
+    // 📡 Conectar a veadotube WebSocket
+    function conectarWebSocket() {
+      socket = new WebSocket("ws://localhost:8080");
+      socket.onopen = () => console.log("✅ Conectado a veadotube");
+      socket.onerror = e => console.error("❌ Error WebSocket", e);
+    }
+
+    // 🧠 Analizar volumen y enviar estado
+    function analizarAudio() {
+      const ctx = new AudioContext();
+      const src = ctx.createMediaElementSource(audio);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 512;
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      src.connect(analyser);
+      analyser.connect(ctx.destination);
+
+      let hablando = false;
+
+      function loop() {
+        analyser.getByteFrequencyData(data);
+        const energy = data.reduce((a, b) => a + b) / data.length;
+        const threshold = 10;
+
+        if (energy > threshold && !hablando) {
+          socket?.send(JSON.stringify({ op: "setTalking", args: [true] }));
+          hablando = true;
+        } else if (energy <= threshold && hablando) {
+          socket?.send(JSON.stringify({ op: "setTalking", args: [false] }));
+          hablando = false;
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+    }
+
+    // 🖱️ Arrastrar y soltar o seleccionar archivo
+    drop.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "audio/*";
+      input.onchange = e => cargarArchivo(e.target.files[0]);
+      input.click();
+    });
+
+    drop.addEventListener("dragover", e => e.preventDefault());
+    drop.addEventListener("drop", e => {
+      e.preventDefault();
+      cargarArchivo(e.dataTransfer.files[0]);
+    });
+
+    function cargarArchivo(file) {
+      if (!file.type.startsWith("audio/")) return alert("Solo archivos de audio.");
+      const url = URL.createObjectURL(file);
+      audio.src = url;
+      audio.play();
+      analizarAudio();
+    }
+
+    conectarWebSocket();
+  </script>
 </body>
 </html>
